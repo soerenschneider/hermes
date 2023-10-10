@@ -33,17 +33,8 @@ $ go install github.com/soerenschneider/hermes@latest
 ```
 
 ## Configuration
-
 Head over to the [configuration section](docs/configuration.md) to see more details.
 
-
-## Getting Started
-
-First, you need to build a keypair. This is easily done
-```bash
-$ docker run ghcr.io/soerenschneider/hermes-client -gen-keypair
-{"public_key":"IyXH8z/+vRsIUEAldlGgKKFcVHoll8w2tzC6o9717m8=","private_key":"h7jrhYupN0LVPnVWqFun6sN+bWNr0B0mh7/mgRaKnhsjJcfzP/69GwhQQCV2UaAooVxUeiWXzDa3MLqj3vXubw=="}
-```
 
 ## Observability
 Head over to the [metrics](docs/metrics.md) to see more details.
