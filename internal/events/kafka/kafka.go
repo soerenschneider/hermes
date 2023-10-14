@@ -148,6 +148,7 @@ func (k *KafkaReader) handleMessage(msg kafka.Message, cortex *notification.Disp
 		log.Error().Err(err).Msg("could not dispatch message")
 	}
 
+	metrics.AcceptedNotifications.WithLabelValues("kafka").Inc()
 	return nil
 }
 

@@ -90,6 +90,7 @@ func (s *HttpServer) notifyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	metrics.AcceptedNotifications.WithLabelValues("http").Inc()
 	w.WriteHeader(http.StatusOK)
 }
 
