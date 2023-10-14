@@ -8,6 +8,13 @@ import (
 const subsystemEvents = "events"
 
 var (
+	AcceptedNotifications = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: namespace,
+		Subsystem: subsystemEvents,
+		Name:      "accepted_notifications_total",
+		Help:      "Total number of accepted notifications",
+	}, []string{"subsystem"})
+
 	NotificationGarbageData = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: namespace,
 		Subsystem: subsystemEvents,

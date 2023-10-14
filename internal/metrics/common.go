@@ -31,4 +31,11 @@ var (
 		Name:      "dispatch_backoff_retries_total",
 		Help:      "Total amount of retries for sending notification",
 	}, []string{"service"})
+
+	NotificationDispatchTime = promauto.NewHistogramVec(prometheus.HistogramOpts{
+		Namespace: namespace,
+		Subsystem: subsystemNotification,
+		Name:      "dispatch_time_total",
+		Buckets:   []float64{0.75, 0.9, 0.95, 0.99},
+	}, []string{"service"})
 )
