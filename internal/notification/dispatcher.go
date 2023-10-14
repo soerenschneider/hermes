@@ -140,7 +140,10 @@ func (d *Dispatcher) hasServiceDefined(serviceId string) bool {
 func (d *Dispatcher) send(ctx context.Context, svc NotificationProvider, item pkg.Notification) {
 	dispatch := func() error {
 		metrics.NotificationDispatchRetries.WithLabelValues(item.ServiceId).Inc()
-		return svc.Send(ctx, item.Subject, item.Message)
+		start := time.Now()
+		err := svc.Send(ctx, item.Subject, item.Message)
+		metrics.NotificationDispatchTime.WithLabelValues(item.ServiceId).Observe(time.Since(start).Seconds())
+		return err
 	}
 
 	if err := backoff.Retry(dispatch, d.backoffImpl); err != nil {
