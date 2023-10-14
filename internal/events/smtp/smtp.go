@@ -6,11 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/soerenschneider/hermes/internal/metrics"
-	"github.com/soerenschneider/hermes/internal/notification"
-
 	"github.com/emersion/go-smtp"
 	"github.com/rs/zerolog/log"
+	"github.com/soerenschneider/hermes/internal/events"
+	"github.com/soerenschneider/hermes/internal/metrics"
 	"go.uber.org/multierr"
 )
 
@@ -19,15 +18,15 @@ type UserAuth interface {
 }
 
 type backend struct {
-	auth   UserAuth
-	cortex *notification.Dispatcher
+	auth       UserAuth
+	dispatcher events.Dispatcher
 }
 
 func (b *backend) NewSession(_ *smtp.Conn) (smtp.Session, error) {
 	metrics.SmtpSessions.Inc()
 	return &Session{
-		auth:   b.auth,
-		cortex: b.cortex,
+		auth:       b.auth,
+		dispatcher: b.dispatcher,
 	}, nil
 }
 
@@ -71,12 +70,12 @@ func NewSmtp(addr string, domain string, auth UserAuth, opts ...SmtpOpts) (*Smtp
 	return smtpServer, errs
 }
 
-func (m *SmtpServer) Listen(ctx context.Context, cortex *notification.Dispatcher, wg *sync.WaitGroup) error {
+func (m *SmtpServer) Listen(ctx context.Context, dispatcher events.Dispatcher, wg *sync.WaitGroup) error {
 	log.Info().Msgf("Starting event source smtp server")
 	wg.Add(1)
 	defer wg.Done()
 
-	m.backend.cortex = cortex
+	m.backend.dispatcher = dispatcher
 
 	log.Info().Msgf("Starting smtp server")
 	go func() {

@@ -22,9 +22,9 @@ const (
 	defaultQueueRetryInterval = 1 * time.Minute
 )
 
-type DispatcherOpts func(*Dispatcher) error
+type DispatcherOpts func(*NotificationDispatcher) error
 
-type Dispatcher struct {
+type NotificationDispatcher struct {
 	providers map[string]NotificationProvider
 
 	retryQueue               queue.Queue
@@ -37,12 +37,12 @@ type Dispatcher struct {
 	deadLetterQueue NotificationProvider
 }
 
-func NewDispatcher(providers map[string]NotificationProvider, queueImpl queue.Queue, opts ...DispatcherOpts) (*Dispatcher, error) {
+func NewDispatcher(providers map[string]NotificationProvider, queueImpl queue.Queue, opts ...DispatcherOpts) (*NotificationDispatcher, error) {
 	if len(providers) == 0 {
 		return nil, errors.New("no notification services provided")
 	}
 
-	dispatcher := &Dispatcher{
+	dispatcher := &NotificationDispatcher{
 		backoffImpl:        backoff.WithMaxRetries(backoff.NewExponentialBackOff(), 3),
 		providers:          providers,
 		retryQueue:         queueImpl,
@@ -60,7 +60,7 @@ func NewDispatcher(providers map[string]NotificationProvider, queueImpl queue.Qu
 	return dispatcher, errs
 }
 
-func (d *Dispatcher) Accept(notification pkg.NotificationRequest, eventSource string) error {
+func (d *NotificationDispatcher) Accept(notification pkg.NotificationRequest, eventSource string) error {
 	if err := validation.Validate(notification); err != nil {
 		metrics.NotificationValidationErrors.WithLabelValues(eventSource).Inc()
 		return err
@@ -74,7 +74,7 @@ func (d *Dispatcher) Accept(notification pkg.NotificationRequest, eventSource st
 	return nil
 }
 
-func (d *Dispatcher) StartQueueReconciliation(ctx context.Context) {
+func (d *NotificationDispatcher) StartQueueReconciliation(ctx context.Context) {
 	d.retryQueueReconciliation.Do(func() {
 		ticker := time.NewTicker(d.retryQueueInterval)
 		defer ticker.Stop()
@@ -99,7 +99,7 @@ func (d *Dispatcher) StartQueueReconciliation(ctx context.Context) {
 	})
 }
 
-func (d *Dispatcher) Listen(ctx context.Context) {
+func (d *NotificationDispatcher) Listen(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -115,7 +115,7 @@ func (d *Dispatcher) Listen(ctx context.Context) {
 	}
 }
 
-func (d *Dispatcher) getNotificationService(serviceId string) NotificationProvider {
+func (d *NotificationDispatcher) getNotificationService(serviceId string) NotificationProvider {
 	svc, ok := d.providers[serviceId]
 	if ok {
 		return svc
@@ -128,7 +128,7 @@ func (d *Dispatcher) getNotificationService(serviceId string) NotificationProvid
 	return d.deadLetterQueue
 }
 
-func (d *Dispatcher) hasServiceDefined(serviceId string) bool {
+func (d *NotificationDispatcher) hasServiceDefined(serviceId string) bool {
 	_, ok := d.providers[serviceId]
 	if ok {
 		return true
@@ -137,7 +137,7 @@ func (d *Dispatcher) hasServiceDefined(serviceId string) bool {
 	return d.deadLetterQueue != nil
 }
 
-func (d *Dispatcher) send(ctx context.Context, svc NotificationProvider, item pkg.Notification) {
+func (d *NotificationDispatcher) send(ctx context.Context, svc NotificationProvider, item pkg.Notification) {
 	dispatch := func() error {
 		metrics.NotificationDispatchRetries.WithLabelValues(item.ServiceId).Inc()
 		start := time.Now()

@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/soerenschneider/hermes/internal/events"
 	"github.com/soerenschneider/hermes/internal/metrics"
 	"github.com/soerenschneider/hermes/internal/notification"
 	"github.com/soerenschneider/hermes/pkg"
@@ -23,8 +24,8 @@ import (
 )
 
 type HttpServer struct {
-	address string
-	cortex  *notification.Dispatcher
+	address    string
+	dispatcher events.Dispatcher
 
 	// optional
 	certFile string
@@ -79,7 +80,7 @@ func (s *HttpServer) notifyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.cortex.Accept(msg, "http"); err != nil {
+	if err := s.dispatcher.Accept(msg, "http"); err != nil {
 		_, isValidationErr := err.(validator.ValidationErrors)
 		if errors.Is(err, notification.ErrServiceNotFound) || isValidationErr {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -94,11 +95,11 @@ func (s *HttpServer) notifyHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (s *HttpServer) Listen(ctx context.Context, cortex *notification.Dispatcher, wg *sync.WaitGroup) error {
+func (s *HttpServer) Listen(ctx context.Context, dispatcher events.Dispatcher, wg *sync.WaitGroup) error {
 	log.Info().Msgf("Starting http server event source, listening on %q", s.address)
 	wg.Add(1)
 
-	s.cortex = cortex
+	s.dispatcher = dispatcher
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/notify", s.notifyHandler)

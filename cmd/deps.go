@@ -8,7 +8,7 @@ import (
 
 const defaultQueueSize = 500
 
-func (d *Deps) buildCortex(conf *config.Config) (*notification.Dispatcher, error) {
+func (d *Deps) buildCortex(conf *config.Config) (*notification.NotificationDispatcher, error) {
 	providers, err := buildProviders(conf)
 	if err != nil {
 		return nil, err

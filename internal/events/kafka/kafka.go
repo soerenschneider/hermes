@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/soerenschneider/hermes/internal/events"
 	"github.com/soerenschneider/hermes/internal/metrics"
-	"github.com/soerenschneider/hermes/internal/notification"
 	"github.com/soerenschneider/hermes/pkg"
 
 	"github.com/rs/zerolog/log"
@@ -87,13 +87,13 @@ func (k *KafkaReader) initReader() {
 	k.once.Do(initReader)
 }
 
-func (k *KafkaReader) Listen(ctx context.Context, cortex *notification.Dispatcher, wg *sync.WaitGroup) error {
+func (k *KafkaReader) Listen(ctx context.Context, dispatcher events.Dispatcher, wg *sync.WaitGroup) error {
 	log.Info().Msgf("Starting kafka reader event source")
 	if ctx == nil {
 		return errors.New("empty context supplied")
 	}
 
-	if cortex == nil {
+	if dispatcher == nil {
 		return errors.New("closed channel supplied")
 	}
 
@@ -113,14 +113,14 @@ func (k *KafkaReader) Listen(ctx context.Context, cortex *notification.Dispatche
 			log.Info().Msg("Kafka received signal")
 			continueConsuming = false
 		default:
-			k.readMessage(ctx, cortex)
+			k.readMessage(ctx, dispatcher)
 		}
 	}
 
 	return k.reader.Close()
 }
 
-func (k *KafkaReader) readMessage(ctx context.Context, cortex *notification.Dispatcher) {
+func (k *KafkaReader) readMessage(ctx context.Context, dispatcher events.Dispatcher) {
 	msg, err := k.reader.FetchMessage(ctx)
 	if err != nil && !errors.Is(err, context.Canceled) {
 		log.Error().Err(err).Msg("Error while reading kafka message")
@@ -128,7 +128,7 @@ func (k *KafkaReader) readMessage(ctx context.Context, cortex *notification.Disp
 	}
 
 	// TODO: error handling
-	if err := k.handleMessage(msg, cortex); err != nil {
+	if err := k.handleMessage(msg, dispatcher); err != nil {
 		log.Error().Err(err).Msg("error handling message")
 	}
 
@@ -137,15 +137,16 @@ func (k *KafkaReader) readMessage(ctx context.Context, cortex *notification.Disp
 	}
 }
 
-func (k *KafkaReader) handleMessage(msg kafka.Message, cortex *notification.Dispatcher) error {
+func (k *KafkaReader) handleMessage(msg kafka.Message, dispatcher events.Dispatcher) error {
 	notification := pkg.NotificationRequest{}
 	if err := json.Unmarshal(msg.Value, &notification); err != nil {
 		metrics.NotificationGarbageData.WithLabelValues("kafka").Inc()
 		return err
 	}
 
-	if err := cortex.Accept(notification, "kafka"); err != nil {
+	if err := dispatcher.Accept(notification, "kafka"); err != nil {
 		log.Error().Err(err).Msg("could not dispatch message")
+		return err
 	}
 
 	metrics.AcceptedNotifications.WithLabelValues("kafka").Inc()

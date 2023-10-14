@@ -8,7 +8,7 @@ import (
 )
 
 func WithDeadLetterQueue(service string) DispatcherOpts {
-	return func(c *Dispatcher) error {
+	return func(c *NotificationDispatcher) error {
 		if len(service) == 0 {
 			return errors.New("empty deadletterqueue service provided")
 		}

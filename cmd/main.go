@@ -35,7 +35,7 @@ type Deps struct {
 	conf config.Config
 
 	queue  queue.Queue
-	cortex *notification.Dispatcher
+	cortex *notification.NotificationDispatcher
 
 	wg *sync.WaitGroup
 

@@ -6,8 +6,8 @@ import (
 	"net/mail"
 	"strings"
 
+	"github.com/soerenschneider/hermes/internal/events"
 	"github.com/soerenschneider/hermes/internal/metrics"
-	"github.com/soerenschneider/hermes/internal/notification"
 	"github.com/soerenschneider/hermes/pkg"
 
 	"github.com/emersion/go-smtp"
@@ -16,7 +16,7 @@ import (
 
 type Session struct {
 	auth            UserAuth
-	cortex          *notification.Dispatcher
+	dispatcher      events.Dispatcher
 	isAuthenticated bool
 
 	user    string
@@ -77,8 +77,10 @@ func (s *Session) Logout() error {
 			return err
 		}
 
-		if err := s.cortex.Accept(*msg, "smtp"); err != nil {
+		if err := s.dispatcher.Accept(*msg, "smtp"); err != nil {
 			log.Error().Err(err).Msg("could not accept notification")
+		} else {
+			metrics.AcceptedNotifications.WithLabelValues("smtp").Inc()
 		}
 	}
 
