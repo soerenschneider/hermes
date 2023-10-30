@@ -3,7 +3,7 @@ module github.com/soerenschneider/hermes
 go 1.21.1
 
 require (
-	github.com/adrianbrad/queue v1.2.1
+	github.com/adrianbrad/queue v1.3.0
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/emersion/go-smtp v0.18.1
 	github.com/go-playground/validator/v10 v10.15.5
