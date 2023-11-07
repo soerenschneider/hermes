@@ -1,5 +1,5 @@
-github.com/adrianbrad/queue v1.2.1 h1:CEVsjFQyuR0s5Hty/HJGWBZHsJ3KMmii0kEgLeam/mk=
-github.com/adrianbrad/queue v1.2.1/go.mod h1:wYiPC/3MPbyT45QHLrPR4zcqJWPePubM1oEP/xTwhUs=
+github.com/adrianbrad/queue v1.3.0 h1:8FH1N+93HXbqta5+URa1AL+diV7MP3VDXAEnP+DNp48=
+github.com/adrianbrad/queue v1.3.0/go.mod h1:wYiPC/3MPbyT45QHLrPR4zcqJWPePubM1oEP/xTwhUs=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
