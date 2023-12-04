@@ -11,7 +11,7 @@ require (
 	github.com/nikoksr/notify v0.41.0
 	github.com/prometheus/client_golang v1.17.0
 	github.com/rs/zerolog v1.31.0
-	github.com/segmentio/kafka-go v0.4.44
+	github.com/segmentio/kafka-go v0.4.46
 	go.uber.org/multierr v1.11.0
 )
 
