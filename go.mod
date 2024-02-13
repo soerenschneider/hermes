@@ -5,7 +5,7 @@ go 1.21.1
 require (
 	github.com/adrianbrad/queue v1.3.0
 	github.com/cenkalti/backoff/v4 v4.2.1
-	github.com/emersion/go-smtp v0.18.1
+	github.com/emersion/go-smtp v0.20.2
 	github.com/go-playground/validator/v10 v10.18.0
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/nikoksr/notify v0.41.0
