@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.1](https://github.com/soerenschneider/hermes/compare/v1.0.0...v1.0.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* **deps:** bump github.com/emersion/go-smtp from 0.18.1 to 0.20.2 ([2adea42](https://github.com/soerenschneider/hermes/commit/2adea421129d9b6202d5ae5707821f8f78e77001))
+* **deps:** bump github.com/go-playground/validator/v10 ([d1beeab](https://github.com/soerenschneider/hermes/commit/d1beeab94073a773a8ca8de0448b8b2bc761d79e))
+* **deps:** bump github.com/segmentio/kafka-go from 0.4.44 to 0.4.47 ([b69cb7c](https://github.com/soerenschneider/hermes/commit/b69cb7ccac22a06cb7e02616214f25ac02618964))
+* **deps:** bump golang from 1.21.3 to 1.22.0 ([1063d1a](https://github.com/soerenschneider/hermes/commit/1063d1a2e0626571cbbde0d08386009da9285f6d))
+* **deps:** bump golang.org/x/crypto from 0.14.0 to 0.17.0 ([c9d9cd1](https://github.com/soerenschneider/hermes/commit/c9d9cd113e431527d342d9309f0631f37ac4866b))
+
 ## 1.0.0 (2023-11-07)
 
 
