@@ -9,7 +9,7 @@ require (
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/nikoksr/notify v0.41.0
-	github.com/prometheus/client_golang v1.18.0
+	github.com/prometheus/client_golang v1.19.0
 	github.com/rs/zerolog v1.32.0
 	github.com/segmentio/kafka-go v0.4.47
 	go.uber.org/multierr v1.11.0
@@ -29,11 +29,10 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
-	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_model v0.5.0 // indirect
-	github.com/prometheus/common v0.45.0 // indirect
+	github.com/prometheus/common v0.48.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	golang.org/x/crypto v0.19.0 // indirect
