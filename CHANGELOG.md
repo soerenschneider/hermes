@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.2](https://github.com/soerenschneider/hermes/compare/v1.0.1...v1.0.2) (2024-03-22)
+
+
+### Bug Fixes
+
+* **deps:** bump github.com/go-playground/validator/v10 ([580a87a](https://github.com/soerenschneider/hermes/commit/580a87a70399ae95f464e3a8abdb0fce0c66be46))
+* **deps:** bump github.com/rs/zerolog from 1.31.0 to 1.32.0 ([2feca8c](https://github.com/soerenschneider/hermes/commit/2feca8c5d0b28392df68c0d0f8bef2e603556023))
+* **deps:** bump golang from 1.22.0 to 1.22.1 ([5d9e826](https://github.com/soerenschneider/hermes/commit/5d9e8261cc3b95a9ce2bf0bac34efbabf4c05efa))
+* **deps:** bump google.golang.org/protobuf from 1.31.0 to 1.33.0 ([67615b7](https://github.com/soerenschneider/hermes/commit/67615b725598f6674e19b69118c72dbfb6f246ce))
+
 ## [1.0.1](https://github.com/soerenschneider/hermes/compare/v1.0.0...v1.0.1) (2024-02-13)
 
 
