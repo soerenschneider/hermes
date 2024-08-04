@@ -67,7 +67,7 @@ func (d *NotificationDispatcher) Accept(notification pkg.NotificationRequest, ev
 	}
 
 	if !d.hasServiceDefined(notification.ServiceId) {
-		return fmt.Errorf("no dead letter retryQueue defined and service %q not known: %w", notification.ServiceId, ErrServiceNotFound)
+		return fmt.Errorf("no dead letter queue defined and service %q is unknown: %w", notification.ServiceId, ErrServiceNotFound)
 	}
 
 	d.acceptBuffer <- pkg.FromNotification(notification)
