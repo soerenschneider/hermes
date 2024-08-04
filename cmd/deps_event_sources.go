@@ -5,6 +5,7 @@ import (
 	"github.com/soerenschneider/hermes/internal/events"
 	"github.com/soerenschneider/hermes/internal/events/http"
 	"github.com/soerenschneider/hermes/internal/events/kafka"
+	"github.com/soerenschneider/hermes/internal/events/rabbitmq"
 	"github.com/soerenschneider/hermes/internal/events/smtp"
 	"github.com/soerenschneider/hermes/internal/events/smtp/auth"
 
@@ -23,6 +24,8 @@ func buildEventSources(conf *config.Config) ([]events.EventSource, error) {
 		switch eventSourceImpl {
 		case "kafka":
 			impl, err = buildKafka(conf)
+		case "rabbitmq":
+			impl, err = buildRabbitMq(conf)
 		case "http":
 			impl, err = buildHttpServer(conf)
 		case "smtp":
@@ -53,6 +56,28 @@ func buildKafka(conf *config.Config) (*kafka.KafkaReader, error) {
 	}
 
 	return kafka.NewReader(conf.Kafka.Brokers, conf.Kafka.Topic, conf.Kafka.GroupId, opts...)
+}
+
+func buildRabbitMq(conf *config.Config) (*rabbitmq.RabbitMqEventListener, error) {
+	var opts []rabbitmq.RabbitMqOpts
+
+	// add webhook_server path
+	if len(conf.RabbitMq.ConsumerName) > 0 {
+		opts = append(opts, rabbitmq.WithConsumerName(conf.RabbitMq.ConsumerName))
+	}
+
+	conn := rabbitmq.RabbitMqConnection{
+		BrokerHost: conf.RabbitMq.Broker,
+		Port:       conf.RabbitMq.Port,
+		Username:   conf.RabbitMq.Username,
+		Password:   conf.RabbitMq.Password,
+		Vhost:      conf.RabbitMq.Vhost,
+		CertFile:   conf.RabbitMq.TlsCertFile,
+		KeyFile:    conf.RabbitMq.TlsKeyFile,
+		UseSsl:     conf.RabbitMq.UseSsl,
+	}
+
+	return rabbitmq.New(conn, conf.RabbitMq.QueueName, opts...)
 }
 
 func buildHttpServer(conf *config.Config) (*http.HttpServer, error) {

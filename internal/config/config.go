@@ -12,8 +12,9 @@ type Config struct {
 	Telegram []TelegramConf `yaml:"telegram" validate:"dive"`
 	Email    []EmailConf    `yaml:"email" validate:"dive"`
 
-	EventSourceImpl []string  `yaml:"events_impl" validate:"required,dive,oneof=kafka http ticker"`
+	EventSourceImpl []string  `yaml:"events_impl" validate:"required,dive,oneof=kafka rabbitmq http"`
 	Kafka           KafkaConf `yaml:"kafka"`
+	RabbitMq        RabbitMq  `yaml:"rabbitmq"`
 	Http            HttpConf  `yaml:"http"`
 	Smtp            SmtpConf  `yaml:"smtp"`
 
@@ -49,6 +50,22 @@ type KafkaConf struct {
 
 	// Advanced options
 	Partition   int    `yaml:"partition" validate:"gte=0"`
+	TlsCertFile string `yaml:"tls_cert_file" validate:"omitempty,file"`
+	TlsKeyFile  string `yaml:"tls_key_file" validate:"omitempty,file"`
+}
+
+type RabbitMq struct {
+	// Mandatory options
+	Broker       string `yaml:"broker" validate:"required_if=EventSourceImpl rabbitmq"`
+	Port         int    `yaml:"port" validate:"omitempty,gte=80,lt=65535"`
+	QueueName    string `yaml:"queue" validate:"required_if=EventSourceImpl rabbitmq"`
+	ConsumerName string `yaml:"consumer"`
+	Vhost        string `yaml:"vhost" validate:"required_if=EventSourceImpl rabbitmq,startswith=/"`
+	Username     string `yaml:"username" validate:"required_if=EventSourceImpl rabbitmq"`
+	Password     string `yaml:"password" validate:"required_if=EventSourceImpl rabbitmq"`
+	UseSsl       bool   `yaml:"use_ssl"`
+
+	// Advanced options
 	TlsCertFile string `yaml:"tls_cert_file" validate:"omitempty,file"`
 	TlsKeyFile  string `yaml:"tls_key_file" validate:"omitempty,file"`
 }

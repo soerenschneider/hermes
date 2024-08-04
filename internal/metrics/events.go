@@ -35,4 +35,16 @@ var (
 		Name:      "smtp_auth_failures_total",
 		Help:      "Total smtp auth failures",
 	})
+
+	RabbitMqErrors = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: namespace,
+		Subsystem: subsystemEvents,
+		Name:      "rabbitmq_errors_total",
+	}, []string{"error"})
+
+	RabbitMqDisconnects = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: namespace,
+		Subsystem: subsystemEvents,
+		Name:      "rabbitmq_disconnects_total",
+	}, []string{"type"})
 )
