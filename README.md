@@ -4,7 +4,7 @@
 ![release-workflow](https://github.com/soerenschneider/hermes/actions/workflows/release-container.yaml/badge.svg)
 ![golangci-lint-workflow](https://github.com/soerenschneider/hermes/actions/workflows/golangci-lint.yaml/badge.svg)
 
-Accepts and routes notifications
+Accepts notifications via multiple adapters and routes notifications to upstream services
 
 ## Features
 
