@@ -34,10 +34,11 @@ func (a *Awtrix) Send(ctx context.Context, subject, message string) error {
 		return err
 	}
 
-	_, err = a.client.Do(request)
+	resp, err := a.client.Do(request)
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	return nil
 }
