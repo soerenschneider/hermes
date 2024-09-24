@@ -9,6 +9,7 @@ import (
 type Config struct {
 	DeadLetterQueue string `yaml:"dead_letter_queue,omitempty"`
 
+	Gotify   []GotifyConf   `yaml:"gotify" validate:"dive"`
 	Telegram []TelegramConf `yaml:"telegram" validate:"dive"`
 	Email    []EmailConf    `yaml:"email" validate:"dive"`
 
@@ -19,6 +20,13 @@ type Config struct {
 	Smtp            SmtpConf  `yaml:"smtp"`
 
 	MetricsAddr string `yaml:"metrics_addr" validate:"omitempty,tcp_addr"`
+}
+
+type GotifyConf struct {
+	ServiceUri string `yaml:"uri" validate:"required"`
+	GotifyAddr string `yaml:"addr" validate:"required,url"`
+	Token      string `yaml:"token" validate:"required_without=TokenFile"`
+	TokenFile  string `yaml:"token_file" validate:"required_without=Token,omitempty,file"`
 }
 
 type TelegramConf struct {

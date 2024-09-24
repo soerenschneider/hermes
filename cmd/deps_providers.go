@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/soerenschneider/hermes/internal/config"
 	"github.com/soerenschneider/hermes/internal/notification"
 
@@ -12,13 +13,42 @@ import (
 	"go.uber.org/multierr"
 )
 
+var defaultHttpClient = retryablehttp.NewClient().HTTPClient
+
 func buildProviders(conf *config.Config) (map[string]notification.NotificationProvider, error) {
 	ret := make(map[string]notification.NotificationProvider)
 
 	var errs error
+	errs = multierr.Append(errs, buildGotify(conf, ret))
 	errs = multierr.Append(errs, buildTelegram(conf, ret))
 	errs = multierr.Append(errs, buildEmail(conf, ret))
 	return ret, errs
+}
+
+func buildGotify(conf *config.Config, n map[string]notification.NotificationProvider) error {
+	var errs error
+	for _, t := range conf.Gotify {
+		token, err := returnValueOrFileContent(t.Token, t.TokenFile)
+		if err != nil {
+			errs = multierr.Append(errs, err)
+			continue
+		}
+
+		gotify, err := notification.NewGotify(t.GotifyAddr, token, defaultHttpClient)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("can not build telegram notififer: %w", err))
+			continue
+		}
+
+		_, ok := n[t.ServiceUri]
+		if ok {
+			errs = multierr.Append(errs, fmt.Errorf("not adding gotify notification: serviceUri %s already registed", t.ServiceUri))
+			continue
+		}
+		n[t.ServiceUri] = gotify
+	}
+
+	return errs
 }
 
 func buildTelegram(conf *config.Config, n map[string]notification.NotificationProvider) error {
