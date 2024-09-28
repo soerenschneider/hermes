@@ -51,6 +51,26 @@ func buildGotify(conf *config.Config, n map[string]notification.NotificationProv
 	return errs
 }
 
+func builAwtrix(conf *config.Config, n map[string]notification.NotificationProvider) error {
+	var errs error
+	for _, t := range conf.Awtrix {
+		awtrix, err := notification.NewAwtrix(t.Addr, defaultHttpClient)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("can not build awtrix notififer: %w", err))
+			continue
+		}
+
+		_, ok := n[t.ServiceUri]
+		if ok {
+			errs = multierr.Append(errs, fmt.Errorf("not adding awtrix notification: serviceUri %q already registed", t.ServiceUri))
+			continue
+		}
+		n[t.ServiceUri] = awtrix
+	}
+
+	return errs
+}
+
 func buildTelegram(conf *config.Config, n map[string]notification.NotificationProvider) error {
 	var errs error
 	for _, t := range conf.Telegram {

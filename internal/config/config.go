@@ -10,6 +10,7 @@ type Config struct {
 	DeadLetterQueue string `yaml:"dead_letter_queue,omitempty"`
 
 	Gotify   []GotifyConf   `yaml:"gotify" validate:"dive"`
+	Awtrix   []AwtrixConf   `yaml:"awtrix" validate:"dive"`
 	Telegram []TelegramConf `yaml:"telegram" validate:"dive"`
 	Email    []EmailConf    `yaml:"email" validate:"dive"`
 
@@ -27,6 +28,11 @@ type GotifyConf struct {
 	GotifyAddr string `yaml:"addr" validate:"required,url"`
 	Token      string `yaml:"token" validate:"required_without=TokenFile"`
 	TokenFile  string `yaml:"token_file" validate:"required_without=Token,omitempty,file"`
+}
+
+type AwtrixConf struct {
+	ServiceUri string `yaml:"uri" validate:"required"`
+	Addr       string `yaml:"addr" validate:"required,url"`
 }
 
 type TelegramConf struct {
