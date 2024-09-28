@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/soerenschneider/hermes/compare/v1.1.0...v1.2.0) (2024-09-28)
+
+
+### Features
+
+* add awtrix support ([9f16a26](https://github.com/soerenschneider/hermes/commit/9f16a2649ce4ddaa4fb5ec98c7ec950a0232a01f))
+
 ## [1.1.0](https://github.com/soerenschneider/hermes/compare/v1.0.1...v1.1.0) (2024-09-28)
 
 
