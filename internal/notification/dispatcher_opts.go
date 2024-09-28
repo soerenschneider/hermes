@@ -17,7 +17,7 @@ func WithDeadLetterQueue(serviceId string) DispatcherOpts {
 		if !ok {
 			return fmt.Errorf("invalid service for deadletterqueue: no such service: %q", serviceId)
 		}
-		log.Info().Msgf("Using service %q as dead letter retryQueue", serviceId)
+		log.Info().Msgf("Using service %q as dead letter queue", serviceId)
 		c.deadLetterQueue = service
 		return nil
 	}
