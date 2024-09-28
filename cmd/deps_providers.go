@@ -20,6 +20,7 @@ func buildProviders(conf *config.Config) (map[string]notification.NotificationPr
 
 	var errs error
 	errs = multierr.Append(errs, buildGotify(conf, ret))
+	errs = multierr.Append(errs, buildAwtrix(conf, ret))
 	errs = multierr.Append(errs, buildTelegram(conf, ret))
 	errs = multierr.Append(errs, buildEmail(conf, ret))
 	return ret, errs
@@ -51,7 +52,7 @@ func buildGotify(conf *config.Config, n map[string]notification.NotificationProv
 	return errs
 }
 
-func builAwtrix(conf *config.Config, n map[string]notification.NotificationProvider) error {
+func buildAwtrix(conf *config.Config, n map[string]notification.NotificationProvider) error {
 	var errs error
 	for _, t := range conf.Awtrix {
 		awtrix, err := notification.NewAwtrix(t.Addr, defaultHttpClient)
