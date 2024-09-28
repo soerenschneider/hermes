@@ -9,7 +9,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/emersion/go-smtp v0.21.3
 	github.com/go-playground/validator/v10 v10.22.0
-	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/nikoksr/notify v1.0.0
 	github.com/prometheus/client_golang v1.20.4
@@ -17,6 +16,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/segmentio/kafka-go v0.4.47
 	go.uber.org/multierr v1.11.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
