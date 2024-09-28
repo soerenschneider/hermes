@@ -7,17 +7,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func WithDeadLetterQueue(service string) DispatcherOpts {
+func WithDeadLetterQueue(serviceId string) DispatcherOpts {
 	return func(c *NotificationDispatcher) error {
-		if len(service) == 0 {
+		if len(serviceId) == 0 {
 			return errors.New("empty deadletterqueue service provided")
 		}
 
-		service, ok := c.providers[service]
+		service, ok := c.providers[serviceId]
 		if !ok {
-			return fmt.Errorf("invalid service for deadletterqueue: no such service: %s", service)
+			return fmt.Errorf("invalid service for deadletterqueue: no such service: %q", serviceId)
 		}
-		log.Info().Msgf("Using service %s as dead letter retryQueue", service)
+		log.Info().Msgf("Using service %q as dead letter retryQueue", serviceId)
 		c.deadLetterQueue = service
 		return nil
 	}
