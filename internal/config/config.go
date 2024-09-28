@@ -13,11 +13,11 @@ type Config struct {
 	Telegram []TelegramConf `yaml:"telegram" validate:"dive"`
 	Email    []EmailConf    `yaml:"email" validate:"dive"`
 
-	EventSourceImpl []string  `yaml:"events_impl" validate:"required,dive,oneof=kafka rabbitmq http"`
-	Kafka           KafkaConf `yaml:"kafka"`
-	RabbitMq        RabbitMq  `yaml:"rabbitmq"`
-	Http            HttpConf  `yaml:"http"`
-	Smtp            SmtpConf  `yaml:"smtp"`
+	EventSourceImpl []string   `yaml:"events_impl" validate:"required,dive,oneof=kafka rabbitmq http"`
+	Kafka           *KafkaConf `yaml:"kafka"`
+	RabbitMq        *RabbitMq  `yaml:"rabbitmq"`
+	Http            *HttpConf  `yaml:"http"`
+	Smtp            *SmtpConf  `yaml:"smtp"`
 
 	MetricsAddr string `yaml:"metrics_addr" validate:"omitempty,tcp_addr"`
 }
@@ -52,9 +52,9 @@ type EmailConf struct {
 type KafkaConf struct {
 	// Mandatory options
 	Enabled bool     `yaml:"enabled"`
-	Brokers []string `yaml:"brokers" validate:"dive,required_if=EventSourceImpl kafka"`
-	Topic   string   `yaml:"topic" validate:"required_if=EventSourceImpl kafka"`
-	GroupId string   `yaml:"group_id" validate:"required_if=EventSourceImpl kafka"`
+	Brokers []string `yaml:"brokers" validate:"dive,required"`
+	Topic   string   `yaml:"topic" validate:"required"`
+	GroupId string   `yaml:"group_id" validate:"required"`
 
 	// Advanced options
 	Partition   int    `yaml:"partition" validate:"gte=0"`
@@ -64,13 +64,13 @@ type KafkaConf struct {
 
 type RabbitMq struct {
 	// Mandatory options
-	Broker       string `yaml:"broker" validate:"required_if=EventSourceImpl rabbitmq"`
+	Broker       string `yaml:"broker" validate:"required"`
 	Port         int    `yaml:"port" validate:"omitempty,gte=80,lt=65535"`
-	QueueName    string `yaml:"queue" validate:"required_if=EventSourceImpl rabbitmq"`
+	QueueName    string `yaml:"queue" validate:"required"`
 	ConsumerName string `yaml:"consumer"`
-	Vhost        string `yaml:"vhost" validate:"required_if=EventSourceImpl rabbitmq,startswith=/"`
-	Username     string `yaml:"username" validate:"required_if=EventSourceImpl rabbitmq"`
-	Password     string `yaml:"password" validate:"required_if=EventSourceImpl rabbitmq"`
+	Vhost        string `yaml:"vhost" validate:"required,startswith=/"`
+	Username     string `yaml:"username" validate:"required"`
+	Password     string `yaml:"password" validate:"required"`
 	UseSsl       bool   `yaml:"use_ssl"`
 
 	// Advanced options
@@ -81,7 +81,7 @@ type RabbitMq struct {
 type HttpConf struct {
 	// Mandatory options
 	Enabled bool   `yaml:"enabled"`
-	Address string `yaml:"address" validate:"required_if=EventSourceImpl http"`
+	Address string `yaml:"address" validate:"required"`
 
 	// Advanced options
 	TlsCertFile string `yaml:"tls_cert_file" validate:"required_with=TlsKeyFile TlsClientCa,omitempty,filepath"`
@@ -102,7 +102,7 @@ type SmtpConf struct {
 
 func getDefaultConfig() *Config {
 	return &Config{
-		Http: HttpConf{
+		Http: &HttpConf{
 			Enabled: true,
 			Address: "0.0.0.0:8080",
 		},
