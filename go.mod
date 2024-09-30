@@ -8,7 +8,7 @@ require (
 	github.com/adrianbrad/queue v1.3.0
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/emersion/go-smtp v0.21.3
-	github.com/go-playground/validator/v10 v10.22.0
+	github.com/go-playground/validator/v10 v10.22.1
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/nikoksr/notify v1.0.0
 	github.com/prometheus/client_golang v1.20.4
