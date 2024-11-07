@@ -11,7 +11,7 @@ require (
 	github.com/go-playground/validator/v10 v10.22.1
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/nikoksr/notify v1.0.0
-	github.com/prometheus/client_golang v1.20.4
+	github.com/prometheus/client_golang v1.20.5
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/rs/zerolog v1.33.0
 	github.com/segmentio/kafka-go v0.4.47
