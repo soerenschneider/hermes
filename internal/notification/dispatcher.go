@@ -70,7 +70,10 @@ func (d *NotificationDispatcher) Accept(notification pkg.NotificationRequest, ev
 		return fmt.Errorf("no dead letter queue defined and service %q is unknown: %w", notification.ServiceId, ErrServiceNotFound)
 	}
 
-	d.acceptBuffer <- pkg.FromNotification(notification)
+	notifications := pkg.FromNotification(notification)
+	for _, not := range notifications {
+		d.acceptBuffer <- not
+	}
 	return nil
 }
 

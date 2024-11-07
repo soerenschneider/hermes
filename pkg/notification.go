@@ -1,6 +1,9 @@
 package pkg
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type Notification struct {
 	Inserted             time.Time
@@ -11,13 +14,21 @@ type Notification struct {
 	Message   string
 }
 
-func FromNotification(n NotificationRequest) Notification {
-	return Notification{
-		Inserted:             time.Now(),
-		UnsuccessfulAttempts: 0,
+func FromNotification(n NotificationRequest) []Notification {
+	serviceIds := strings.Split(n.ServiceId, ",")
+	var notifications []Notification
+	for _, serviceId := range serviceIds {
+		not := Notification{
+			Inserted:             time.Now(),
+			UnsuccessfulAttempts: 0,
 
-		ServiceId: n.ServiceId,
-		Subject:   n.Subject,
-		Message:   n.Message,
+			ServiceId: serviceId,
+			Subject:   n.Subject,
+			Message:   n.Message,
+		}
+
+		notifications = append(notifications, not)
 	}
+
+	return notifications
 }
