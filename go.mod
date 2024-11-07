@@ -1,7 +1,8 @@
 module github.com/soerenschneider/hermes
 
-go 1.22
-toolchain go1.23.0
+go 1.22.7
+
+toolchain go1.23.2
 
 require (
 	github.com/adrianbrad/queue v1.3.0
