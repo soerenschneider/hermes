@@ -49,7 +49,6 @@ func (a *Awtrix) getRequest(text string) (*http.Request, error) {
 	url := fmt.Sprintf("%s/api/notify", a.host)
 	data := map[string]any{
 		"text":     text,
-		"rainbow":  true,
 		"duration": 10,
 	}
 
