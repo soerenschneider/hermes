@@ -33,9 +33,9 @@ func (q *CircularQueue) Offer(item pkg.Notification) error {
 }
 
 func (q *CircularQueue) Get() (pkg.Notification, error) {
-	metrics.QueueSize.Set(float64(q.queue.Size()))
 	log.Debug().Msg("Removing head from from queue")
 	item, err := q.queue.Get()
+	metrics.QueueSize.Set(float64(q.queue.Size()))
 	return item, err
 }
 
