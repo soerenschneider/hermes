@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0](https://github.com/soerenschneider/hermes/compare/v1.1.0...v1.2.0) (2024-11-07)
+
+
+### Features
+
+* add awtrix support ([9f16a26](https://github.com/soerenschneider/hermes/commit/9f16a2649ce4ddaa4fb5ec98c7ec950a0232a01f))
+* allow specifying multiple comma-separated service ids ([c05a29f](https://github.com/soerenschneider/hermes/commit/c05a29f183b2d685c4ecf8da5cea3f98ea83b938))
+
+
+### Bug Fixes
+
+* add call to build awtrix ([dd5923f](https://github.com/soerenschneider/hermes/commit/dd5923f3dcbea96f9bdaedc7780aff21af979d70))
+* **deps:** bump github.com/go-playground/validator/v10 ([e44e0f2](https://github.com/soerenschneider/hermes/commit/e44e0f20d212685d6c71a4a998e298d62e0c88b4))
+* **deps:** bump github.com/prometheus/client_golang ([9a3beaf](https://github.com/soerenschneider/hermes/commit/9a3beaf86e44ec5a703edbf7af80ae55b1c770fd))
+* **deps:** bump golang from 1.23.1 to 1.23.2 ([740017a](https://github.com/soerenschneider/hermes/commit/740017a6e73932753b42d1cbce327c1a3481fce4))
+* don't ignore error ([3fab4cc](https://github.com/soerenschneider/hermes/commit/3fab4cc956e3c9c664cf3562bce5faf8bba814ba))
+* update metric after retrieving item to fix off by one metric ([fbacd0a](https://github.com/soerenschneider/hermes/commit/fbacd0afa0f52ee5ef361da34d06c3a968912bfe))
+
 ## [1.1.0](https://github.com/soerenschneider/hermes/compare/v1.0.1...v1.1.0) (2024-09-28)
 
 
