@@ -62,7 +62,7 @@ func (q *SQLiteQueue) Get(ctx context.Context) (pkg.Notification, error) {
 func (q *SQLiteQueue) GetMessageCount(ctx context.Context) (int64, error) {
 	cnt, err := q.generated.GetCount(ctx)
 	if err == nil {
-		metrics.QueueCapacity.Set(float64(cnt))
+		metrics.QueueSize.Set(float64(cnt))
 	}
 	return cnt, err
 }
