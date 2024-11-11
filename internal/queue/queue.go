@@ -23,6 +23,7 @@ func ExponentialBackoff(n int, baseDelay time.Duration, maxDelay time.Duration) 
 		backoff = float64(maxDelay)
 	}
 
+	//#nosec:G404
 	jitter := rand.Float64()*0.2 + 0.9 // Generates a value between 0.9 and 1.1
 	backoff *= jitter
 
