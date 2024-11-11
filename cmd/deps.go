@@ -4,6 +4,7 @@ import (
 	"github.com/soerenschneider/hermes/internal/config"
 	"github.com/soerenschneider/hermes/internal/notification"
 	"github.com/soerenschneider/hermes/internal/queue"
+	"github.com/soerenschneider/hermes/internal/queue/sqlite"
 )
 
 const defaultQueueSize = 500
@@ -23,5 +24,9 @@ func (d *Deps) buildCortex(conf *config.Config) (*notification.NotificationDispa
 }
 
 func (d *Deps) buildQueue(conf *config.Config) (queue.Queue, error) {
-	return queue.NewQueue(defaultQueueSize)
+	if conf.Db == nil || conf.Db.Type == "memory" {
+		return sqlite.New(":memory:")
+	}
+
+	return sqlite.New(conf.Db.Name)
 }
