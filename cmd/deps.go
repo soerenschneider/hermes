@@ -7,8 +7,6 @@ import (
 	"github.com/soerenschneider/hermes/internal/queue/sqlite"
 )
 
-const defaultQueueSize = 500
-
 func (d *Deps) buildCortex(conf *config.Config) (*notification.NotificationDispatcher, error) {
 	providers, err := buildProviders(conf)
 	if err != nil {
