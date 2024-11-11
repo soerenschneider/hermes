@@ -2,14 +2,14 @@ FROM golang:1.23.3 AS build
 
 WORKDIR /src
 COPY ./go.mod ./go.sum ./
-ENV GOOS=linux GOARCH=amd64 CGO_ENABLED=0
+ENV GOOS=linux GOARCH=amd64 CGO_ENABLED=1
 RUN go mod download
 
 COPY ./ ./
 RUN make build
 
 
-FROM gcr.io/distroless/static AS final
+FROM debian:12.7-slim AS final
 
 LABEL maintainer="soerenschneider"
 USER nonroot:nonroot
