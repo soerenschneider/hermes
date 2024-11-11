@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/soerenschneider/hermes/compare/v1.2.0...v1.3.0) (2024-11-11)
+
+
+### Features
+
+* add config for dbs ([f1c66d2](https://github.com/soerenschneider/hermes/commit/f1c66d215b8ba80fc7e8e5fdf03b3fa90a8f544b))
+* store retryable messages across restarts ([87a42c6](https://github.com/soerenschneider/hermes/commit/87a42c6c7ac3c97465684d3ee57107b35b041a86))
+
 ## [1.2.0](https://github.com/soerenschneider/hermes/compare/v1.1.0...v1.2.0) (2024-11-07)
 
 
