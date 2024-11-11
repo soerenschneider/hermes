@@ -85,7 +85,6 @@ func (d *NotificationDispatcher) StartQueueReconciliation(ctx context.Context) {
 				return
 			case <-ticker.C:
 				cnt, _ := d.retryQueue.GetMessageCount(ctx)
-				log.Info().Int64("size", cnt).Msg("Messages available")
 				var i int64
 				for i = 0; i < cnt; i++ {
 					msg, err := d.retryQueue.Get(ctx)
@@ -161,8 +160,6 @@ func (d *NotificationDispatcher) send(ctx context.Context, svc NotificationProvi
 		}
 
 		item.RetryDate = time.Now().Add(queue.ExponentialBackoff(item.UnsuccessfulAttempts, 5*time.Second, 36*time.Hour))
-		log.Info().Msgf("Retry date is %v", item.RetryDate)
-
 		if err := d.retryQueue.Offer(ctx, item); err != nil {
 			metrics.QueueErrors.WithLabelValues("offer").Inc()
 			log.Error().Err(err).Msg("could not enqueue message")
