@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	maxQueueRetries           = 15
+	maxQueueRetries           = 20
 	defaultQueueRetryInterval = 1 * time.Minute
 )
 
@@ -31,8 +31,6 @@ type NotificationDispatcher struct {
 	retryQueueInterval       time.Duration
 	retryQueueReconciliation sync.Once
 
-	backoffImpl backoff.BackOff
-
 	acceptBuffer    chan pkg.Notification
 	deadLetterQueue NotificationProvider
 }
@@ -43,7 +41,6 @@ func NewDispatcher(providers map[string]NotificationProvider, queueImpl queue.Qu
 	}
 
 	dispatcher := &NotificationDispatcher{
-		backoffImpl:        backoff.WithMaxRetries(backoff.NewExponentialBackOff(), 3),
 		providers:          providers,
 		retryQueue:         queueImpl,
 		retryQueueInterval: defaultQueueRetryInterval,
@@ -87,8 +84,11 @@ func (d *NotificationDispatcher) StartQueueReconciliation(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				for !d.retryQueue.IsEmpty() {
-					msg, err := d.retryQueue.Get()
+				cnt, _ := d.retryQueue.GetMessageCount(ctx)
+				log.Info().Int64("size", cnt).Msg("Messages available")
+				var i int64
+				for i = 0; i < cnt; i++ {
+					msg, err := d.retryQueue.Get(ctx)
 					if err != nil {
 						metrics.QueueErrors.WithLabelValues("dequeue").Inc()
 						log.Debug().Err(err).Msg("could not dequeue message")
@@ -109,8 +109,6 @@ func (d *NotificationDispatcher) Listen(ctx context.Context) {
 			return
 		case item := <-d.acceptBuffer:
 			func(item pkg.Notification) {
-				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-				defer cancel()
 				svc := d.getNotificationService(item.ServiceId)
 				d.send(ctx, svc, item)
 			}(item)
@@ -142,6 +140,8 @@ func (d *NotificationDispatcher) hasServiceDefined(serviceId string) bool {
 
 func (d *NotificationDispatcher) send(ctx context.Context, svc NotificationProvider, item pkg.Notification) {
 	dispatch := func() error {
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
 		metrics.NotificationDispatchRetries.WithLabelValues(item.ServiceId).Inc()
 		start := time.Now()
 		err := svc.Send(ctx, item.Subject, item.Message)
@@ -149,19 +149,23 @@ func (d *NotificationDispatcher) send(ctx context.Context, svc NotificationProvi
 		return err
 	}
 
-	if err := backoff.Retry(dispatch, d.backoffImpl); err != nil {
+	impl := backoff.WithMaxRetries(backoff.NewExponentialBackOff(), 3)
+	if err := backoff.Retry(dispatch, impl); err != nil {
 		item.UnsuccessfulAttempts += 1
 		metrics.NotificationDispatchErrors.WithLabelValues(item.ServiceId).Inc()
 		log.Warn().Err(err).Int("retries", item.UnsuccessfulAttempts).Msg("could not dispatch message, adding to retryQueue")
 
 		if item.UnsuccessfulAttempts >= maxQueueRetries {
-			log.Warn().Msg("Dropping message")
+			log.Warn().Int64("id", item.Id).Msgf("Dropping message after %d failed retries", item.UnsuccessfulAttempts)
 			return
 		}
 
-		if err := d.retryQueue.Offer(item); err != nil {
+		item.RetryDate = time.Now().Add(queue.ExponentialBackoff(item.UnsuccessfulAttempts, 5*time.Second, 36*time.Hour))
+		log.Info().Msgf("Retry date is %v", item.RetryDate)
+
+		if err := d.retryQueue.Offer(ctx, item); err != nil {
 			metrics.QueueErrors.WithLabelValues("offer").Inc()
-			log.Error().Err(err).Msg("could not enqueue message, this should not happen")
+			log.Error().Err(err).Msg("could not enqueue message")
 		}
 	}
 }

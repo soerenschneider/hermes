@@ -6,7 +6,9 @@ import (
 )
 
 type Notification struct {
+	Id                   int64
 	Inserted             time.Time
+	RetryDate            time.Time
 	UnsuccessfulAttempts int
 
 	ServiceId string

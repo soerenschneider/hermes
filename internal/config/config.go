@@ -7,7 +7,8 @@ import (
 )
 
 type Config struct {
-	DeadLetterQueue string `yaml:"dead_letter_queue,omitempty"`
+	Db              *DbConf `yaml:"db"`
+	DeadLetterQueue string  `yaml:"dead_letter_queue,omitempty"`
 
 	Gotify   []GotifyConf   `yaml:"gotify" validate:"dive"`
 	Awtrix   []AwtrixConf   `yaml:"awtrix" validate:"dive"`
@@ -21,6 +22,12 @@ type Config struct {
 	Smtp            *SmtpConf  `yaml:"smtp"`
 
 	MetricsAddr string `yaml:"metrics_addr" validate:"omitempty,tcp_addr"`
+}
+
+type DbConf struct {
+	Type string `yaml:"type" validate:"oneof=memory sqlite"`
+
+	Name string `yaml:"name"`
 }
 
 type GotifyConf struct {
