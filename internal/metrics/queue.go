@@ -8,13 +8,6 @@ import (
 const subsystemQueue = "queue"
 
 var (
-	QueueCapacity = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: namespace,
-		Subsystem: subsystemQueue,
-		Name:      "capacity_total",
-		Help:      "Total capacity of the queue",
-	})
-
 	QueueSize = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystemQueue,
