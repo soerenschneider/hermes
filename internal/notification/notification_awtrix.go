@@ -42,6 +42,10 @@ func (a *Awtrix) Send(ctx context.Context, subject, message string) error {
 		_ = resp.Body.Close()
 	}()
 
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("awtrix sent status code %d", resp.StatusCode)
+	}
+
 	return nil
 }
 

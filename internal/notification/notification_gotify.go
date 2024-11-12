@@ -51,6 +51,10 @@ func (a *Gotify) Send(ctx context.Context, subject, message string) error {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("gotify sent status code %d", resp.StatusCode)
+	}
+
 	return nil
 }
 
