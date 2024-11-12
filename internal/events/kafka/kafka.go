@@ -8,12 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/soerenschneider/hermes/internal/events"
-	"github.com/soerenschneider/hermes/internal/metrics"
-	"github.com/soerenschneider/hermes/pkg"
-
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
+	"github.com/soerenschneider/hermes/internal/domain"
+	"github.com/soerenschneider/hermes/internal/events"
+	"github.com/soerenschneider/hermes/internal/metrics"
 	"go.uber.org/multierr"
 )
 
@@ -138,7 +137,7 @@ func (k *KafkaReader) readMessage(ctx context.Context, dispatcher events.Dispatc
 }
 
 func (k *KafkaReader) handleMessage(msg kafka.Message, dispatcher events.Dispatcher) error {
-	notification := pkg.NotificationRequest{}
+	notification := domain.NotificationRequest{}
 	if err := json.Unmarshal(msg.Value, &notification); err != nil {
 		metrics.NotificationGarbageData.WithLabelValues("kafka").Inc()
 		return err

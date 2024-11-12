@@ -5,6 +5,9 @@ CHECKSUM_FILE = checksum.sha256
 SIGNATURE_KEYFILE = ~/.signify/github.sec
 DOCKER_PREFIX = ghcr.io/soerenschneider
 
+generate:
+	go generate  ./...
+
 tests:
 	go test ./... -race -covermode=atomic -coverprofile=coverage.out
 	go tool cover -html=coverage.out -o=coverage.html

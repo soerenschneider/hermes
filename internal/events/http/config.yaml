@@ -1,0 +1,11 @@
+---
+package: http
+generate:
+  std-http-server: true
+  client: false
+  models: true
+  embedded-spec: true
+  strict-server: true
+output: api.gen.go
+output-options:
+  skip-prune: true

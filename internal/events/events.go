@@ -4,11 +4,11 @@ import (
 	"context"
 	"sync"
 
-	"github.com/soerenschneider/hermes/pkg"
+	"github.com/soerenschneider/hermes/internal/domain"
 )
 
 type Dispatcher interface {
-	Accept(notification pkg.NotificationRequest, eventSource string) error
+	Accept(notification domain.NotificationRequest, eventSource string) error
 }
 
 type EventSource interface {
