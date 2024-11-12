@@ -12,9 +12,9 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog/log"
+	"github.com/soerenschneider/hermes/internal/domain"
 	"github.com/soerenschneider/hermes/internal/events"
 	"github.com/soerenschneider/hermes/internal/metrics"
-	"github.com/soerenschneider/hermes/pkg"
 	"go.uber.org/multierr"
 )
 
@@ -162,7 +162,7 @@ func (e *RabbitMqEventListener) listen(ctx context.Context, dispatcher events.Di
 }
 
 func (e *RabbitMqEventListener) handleMessage(msg amqp.Delivery, dispatcher events.Dispatcher) {
-	notification := pkg.NotificationRequest{}
+	notification := domain.NotificationRequest{}
 	if err := json.Unmarshal(msg.Body, &notification); err != nil {
 		metrics.NotificationGarbageData.WithLabelValues("rabbitmq").Inc()
 		log.Error().Err(err).Str("component", "rabbitmq").Msg("could not decode message")

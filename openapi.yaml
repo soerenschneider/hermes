@@ -1,0 +1,82 @@
+openapi: 3.0.3
+info:
+  title: Hermes API
+  description: API for sending notifications via the /notify endpoint.
+  version: 1.0.0
+servers:
+  - url: https://api.hermes.example.com
+    description: Production server
+
+paths:
+  /notify:
+    post:
+      summary: Send a notification
+      description: Sends a notification with the provided details to the specified service.
+      operationId: sendNotification
+      requestBody:
+        description: The notification data to send.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+      responses:
+        '200':
+          description: Notification sent successfully
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-go-type-skip-optional-pointer: true
+                    example: "Invalid input, missing required fields."
+                  details:
+                    type: array
+                    items:
+                      type: string
+                    example: ["service_id is required", "message is required"]
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error."
+components:
+  schemas:
+    NotificationRequest:
+      type: object
+      required:
+        - service_id
+        - subject
+        - message
+      properties:
+        service_id:
+          type: string
+          description: The ID of the service requesting the notification.
+          example: "service123"
+          x-oapi-codegen-extra-tags:
+            validate: required
+        routing_key:
+          type: string
+          description: The routing key used to categorize or route the notification.
+          example: "error.alert"
+        subject:
+          type: string
+          description: The subject of the notification.
+          example: "Critical Error"
+          x-oapi-codegen-extra-tags:
+            validate: required
+        message:
+          type: string
+          description: The message content of the notification.
+          example: "A critical error has occurred in the service."
+          x-oapi-codegen-extra-tags:
+            validate: required
+      additionalProperties: false

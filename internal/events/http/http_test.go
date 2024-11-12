@@ -9,15 +9,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/soerenschneider/hermes/pkg"
+	"github.com/soerenschneider/hermes/internal/domain"
 )
 
 type DummyDispatcher struct {
-	not *pkg.NotificationRequest
+	not *domain.NotificationRequest
 	src *string
 }
 
-func (d *DummyDispatcher) Accept(notification pkg.NotificationRequest, eventSource string) error {
+func (d *DummyDispatcher) Accept(notification domain.NotificationRequest, eventSource string) error {
 	d.not = &notification
 	d.src = &eventSource
 	return nil
@@ -103,7 +103,7 @@ func TestHttpServer_notifyHandler_ok(t *testing.T) {
 
 	server.notifyHandler(w, req)
 	res := w.Result()
-	expected := pkg.NotificationRequest{
+	expected := domain.NotificationRequest{
 		ServiceId: serviceId,
 		Subject:   subject,
 		Message:   message,
@@ -123,7 +123,7 @@ const (
 )
 
 func getValidReqest(t *testing.T) io.Reader {
-	req := pkg.NotificationRequest{
+	req := domain.NotificationRequest{
 		ServiceId: serviceId,
 		Subject:   subject,
 		Message:   message,

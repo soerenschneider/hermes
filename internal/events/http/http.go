@@ -4,21 +4,19 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"sync"
 	"time"
 
-	"github.com/soerenschneider/hermes/internal/events"
-	"github.com/soerenschneider/hermes/internal/metrics"
-	"github.com/soerenschneider/hermes/internal/notification"
-	"github.com/soerenschneider/hermes/pkg"
-
 	"github.com/go-playground/validator/v10"
+	"github.com/soerenschneider/hermes/internal/domain"
+	"github.com/soerenschneider/hermes/internal/events"
+	"github.com/soerenschneider/hermes/internal/notification"
+	"gitlab.com/tanna.dev/openapi-doc-http-handler/elements"
+
 	"github.com/rs/zerolog/log"
 	"go.uber.org/multierr"
 )
@@ -32,6 +30,29 @@ type HttpServer struct {
 	keyFile  string
 
 	clientCaCertFile string
+}
+
+func (s *HttpServer) SendNotification(ctx context.Context, request SendNotificationRequestObject) (SendNotificationResponseObject, error) {
+	msg := domain.NotificationRequest{
+		ServiceId: request.Body.ServiceId,
+		Subject:   request.Body.Subject,
+		Message:   request.Body.Message,
+	}
+
+	if err := s.dispatcher.Accept(msg, "http"); err != nil {
+		_, isValidationErr := err.(validator.ValidationErrors)
+		if isValidationErr {
+			return SendNotification400JSONResponse{Error: "validation error"}, nil
+		}
+
+		if errors.Is(err, notification.ErrServiceNotFound) {
+			return SendNotification400JSONResponse{Error: "service_id not found"}, nil
+		}
+
+		return SendNotification500JSONResponse{}, nil
+	}
+
+	return SendNotification200Response{}, nil
 }
 
 type HttpServerOpts func(*HttpServer) error
@@ -59,50 +80,16 @@ func (s *HttpServer) IsTLSConfigured() bool {
 	return len(s.certFile) > 0 && len(s.keyFile) > 0
 }
 
-func (s *HttpServer) notifyHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	data, err := io.ReadAll(r.Body)
-	if err != nil {
-		return
-	}
-	if err := r.Body.Close(); err != nil {
-		log.Warn().Err(err).Msg("could not close http body")
-	}
-
-	msg := pkg.NotificationRequest{}
-	if err := json.Unmarshal(data, &msg); err != nil {
-		metrics.NotificationGarbageData.WithLabelValues("http").Inc()
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := s.dispatcher.Accept(msg, "http"); err != nil {
-		_, isValidationErr := err.(validator.ValidationErrors)
-		if errors.Is(err, notification.ErrServiceNotFound) || isValidationErr {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	metrics.AcceptedNotifications.WithLabelValues("http").Inc()
-	w.WriteHeader(http.StatusOK)
-}
-
 func (s *HttpServer) Listen(ctx context.Context, dispatcher events.Dispatcher, wg *sync.WaitGroup) error {
 	log.Info().Msgf("Starting http server event source, listening on %q", s.address)
 	wg.Add(1)
 
 	s.dispatcher = dispatcher
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/notify", s.notifyHandler)
+	handler, err := s.getOpenApiHandler()
+	if err != nil {
+		return err
+	}
 
 	tlsConfig, err := s.getTlsConf()
 	if err != nil {
@@ -111,7 +98,7 @@ func (s *HttpServer) Listen(ctx context.Context, dispatcher events.Dispatcher, w
 
 	server := http.Server{
 		Addr:              s.address,
-		Handler:           mux,
+		Handler:           handler,
 		ReadTimeout:       3 * time.Second,
 		ReadHeaderTimeout: 3 * time.Second,
 		WriteTimeout:      3 * time.Second,
@@ -184,4 +171,31 @@ func (s *HttpServer) getCertificate(info *tls.ClientHelloInfo) (*tls.Certificate
 		log.Error().Err(err).Msg("user-defined client certificates could not be loaded")
 	}
 	return &certificate, err
+}
+
+func (s *HttpServer) getOpenApiHandler() (http.Handler, error) {
+	// add a mux that serves /docs
+	swagger, err := GetSwagger()
+	if err != nil {
+		return nil, err
+	}
+
+	docs, err := elements.NewHandler(swagger, err)
+	if err != nil {
+		return nil, err
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/docs", docs)
+	mux.HandleFunc("/health", func(writer http.ResponseWriter, request *http.Request) {
+		writer.WriteHeader(200)
+	})
+
+	options := StdHTTPServerOptions{
+		Middlewares: []MiddlewareFunc{},
+		BaseRouter:  mux,
+	}
+
+	strictHandler := NewStrictHandler(s, nil)
+	return HandlerWithOptions(strictHandler, options), nil
 }

@@ -7,13 +7,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
+	"github.com/rs/zerolog/log"
+	"github.com/soerenschneider/hermes/internal/domain"
 	"github.com/soerenschneider/hermes/internal/metrics"
 	"github.com/soerenschneider/hermes/internal/queue"
 	"github.com/soerenschneider/hermes/internal/validation"
-	"github.com/soerenschneider/hermes/pkg"
-
-	"github.com/cenkalti/backoff/v4"
-	"github.com/rs/zerolog/log"
 	"go.uber.org/multierr"
 )
 
@@ -31,7 +30,7 @@ type NotificationDispatcher struct {
 	retryQueueInterval       time.Duration
 	retryQueueReconciliation sync.Once
 
-	acceptBuffer    chan pkg.Notification
+	acceptBuffer    chan domain.Notification
 	deadLetterQueue NotificationProvider
 }
 
@@ -44,7 +43,7 @@ func NewDispatcher(providers map[string]NotificationProvider, queueImpl queue.Qu
 		providers:          providers,
 		retryQueue:         queueImpl,
 		retryQueueInterval: defaultQueueRetryInterval,
-		acceptBuffer:       make(chan pkg.Notification, 30),
+		acceptBuffer:       make(chan domain.Notification, 30),
 	}
 
 	var errs error
@@ -57,7 +56,7 @@ func NewDispatcher(providers map[string]NotificationProvider, queueImpl queue.Qu
 	return dispatcher, errs
 }
 
-func (d *NotificationDispatcher) Accept(notification pkg.NotificationRequest, eventSource string) error {
+func (d *NotificationDispatcher) Accept(notification domain.NotificationRequest, eventSource string) error {
 	if err := validation.Validate(notification); err != nil {
 		metrics.NotificationValidationErrors.WithLabelValues(eventSource).Inc()
 		return err
@@ -67,7 +66,7 @@ func (d *NotificationDispatcher) Accept(notification pkg.NotificationRequest, ev
 		return fmt.Errorf("no dead letter queue defined and service %q is unknown: %w", notification.ServiceId, ErrServiceNotFound)
 	}
 
-	notifications := pkg.FromNotification(notification)
+	notifications := domain.FromNotification(notification)
 	for _, not := range notifications {
 		d.acceptBuffer <- not
 	}
@@ -107,7 +106,7 @@ func (d *NotificationDispatcher) Listen(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case item := <-d.acceptBuffer:
-			func(item pkg.Notification) {
+			func(item domain.Notification) {
 				svc := d.getNotificationService(item.ServiceId)
 				d.send(ctx, svc, item)
 			}(item)
@@ -137,7 +136,7 @@ func (d *NotificationDispatcher) hasServiceDefined(serviceId string) bool {
 	return d.deadLetterQueue != nil
 }
 
-func (d *NotificationDispatcher) send(ctx context.Context, svc NotificationProvider, item pkg.Notification) {
+func (d *NotificationDispatcher) send(ctx context.Context, svc NotificationProvider, item domain.Notification) {
 	dispatch := func() error {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()

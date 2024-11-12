@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/soerenschneider/hermes/pkg"
+	"github.com/soerenschneider/hermes/internal/domain"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +24,7 @@ func TestNewSQLiteQueue(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	item := pkg.Notification{
+	item := domain.Notification{
 		ServiceId: "svc",
 		Subject:   "subject",
 		Message:   "message message message",

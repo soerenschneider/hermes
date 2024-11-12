@@ -7,9 +7,9 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/rs/zerolog/log"
+	"github.com/soerenschneider/hermes/internal/domain"
 	"github.com/soerenschneider/hermes/internal/metrics"
 	"github.com/soerenschneider/hermes/internal/queue/sqlite/generated"
-	"github.com/soerenschneider/hermes/pkg"
 )
 
 type SQLiteQueue struct {
@@ -32,7 +32,7 @@ func New(dbPath string) (*SQLiteQueue, error) {
 	return ret, ret.Migrate(context.Background())
 }
 
-func (q *SQLiteQueue) Offer(ctx context.Context, item pkg.Notification) error {
+func (q *SQLiteQueue) Offer(ctx context.Context, item domain.Notification) error {
 	params := generated.InsertParams{
 		Subject:   item.Subject,
 		Message:   item.Message,
@@ -43,13 +43,13 @@ func (q *SQLiteQueue) Offer(ctx context.Context, item pkg.Notification) error {
 	return q.generated.Insert(ctx, params)
 }
 
-func (q *SQLiteQueue) Get(ctx context.Context) (pkg.Notification, error) {
+func (q *SQLiteQueue) Get(ctx context.Context) (domain.Notification, error) {
 	read, err := q.generated.GetMessage(ctx)
 	if err != nil {
-		return pkg.Notification{}, err
+		return domain.Notification{}, err
 	}
 
-	return pkg.Notification{
+	return domain.Notification{
 		Id:                   read.ID,
 		Inserted:             read.InsertionDate,
 		UnsuccessfulAttempts: int(read.Retries),

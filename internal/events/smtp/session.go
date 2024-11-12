@@ -6,12 +6,11 @@ import (
 	"net/mail"
 	"strings"
 
-	"github.com/soerenschneider/hermes/internal/events"
-	"github.com/soerenschneider/hermes/internal/metrics"
-	"github.com/soerenschneider/hermes/pkg"
-
 	"github.com/emersion/go-smtp"
 	"github.com/rs/zerolog/log"
+	"github.com/soerenschneider/hermes/internal/domain"
+	"github.com/soerenschneider/hermes/internal/events"
+	"github.com/soerenschneider/hermes/internal/metrics"
 )
 
 type Session struct {
@@ -88,7 +87,7 @@ func (s *Session) Logout() error {
 	return nil
 }
 
-func (s *Session) toNotification() (*pkg.NotificationRequest, error) {
+func (s *Session) toNotification() (*domain.NotificationRequest, error) {
 	if s.content == nil {
 		return nil, errors.New("invalid data")
 	}
@@ -99,7 +98,7 @@ func (s *Session) toNotification() (*pkg.NotificationRequest, error) {
 
 	body := string(bodyBytes)
 
-	return &pkg.NotificationRequest{
+	return &domain.NotificationRequest{
 		ServiceId: extractServiceId(extractServiceId(s.to[0])),
 		Subject:   s.content.Header.Get("Subject"),
 		Message:   body,

@@ -6,12 +6,12 @@ import (
 	"math/rand/v2"
 	"time"
 
-	"github.com/soerenschneider/hermes/pkg"
+	"github.com/soerenschneider/hermes/internal/domain"
 )
 
 type Queue interface {
-	Offer(ctx context.Context, item pkg.Notification) error
-	Get(ctx context.Context) (pkg.Notification, error)
+	Offer(ctx context.Context, item domain.Notification) error
+	Get(ctx context.Context) (domain.Notification, error)
 	IsEmpty(ctx context.Context) (bool, error)
 	GetMessageCount(ctx context.Context) (int64, error)
 }
