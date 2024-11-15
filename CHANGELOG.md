@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.0](https://github.com/soerenschneider/hermes/compare/v1.3.0...v1.4.0) (2024-11-12)
+
+
+### Features
+
+* auto-generate REST client and server code ([c8af1b1](https://github.com/soerenschneider/hermes/commit/c8af1b1daf00e92c2ce7cc9ee2309dfbf08c63c0))
+
+
+### Bug Fixes
+
+* check staus code of http responses ([efc8145](https://github.com/soerenschneider/hermes/commit/efc814548e46dca8889cda663063491218639eea))
+* require subject as according to openapi spec ([cd122a3](https://github.com/soerenschneider/hermes/commit/cd122a34516d0c46392e716ef2c4975b7aee917b))
+* use correct metric ([3c0384d](https://github.com/soerenschneider/hermes/commit/3c0384defd78392cfc5b5c18279c629abd5f2b60))
+
 ## [1.3.0](https://github.com/soerenschneider/hermes/compare/v1.2.0...v1.3.0) (2024-11-11)
 
 
