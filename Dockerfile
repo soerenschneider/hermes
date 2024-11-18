@@ -9,7 +9,7 @@ COPY ./ ./
 RUN make build
 
 
-FROM debian:12.7-slim AS final
+FROM debian:12.8-slim AS final
 
 LABEL maintainer="soerenschneider"
 USER nonroot:nonroot
