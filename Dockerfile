@@ -12,7 +12,8 @@ RUN make build
 FROM debian:12.7-slim AS final
 
 LABEL maintainer="soerenschneider"
-USER nonroot:nonroot
-COPY --from=build --chown=nonroot:nonroot /src/hermes /hermes
+RUN useradd -m -s /bin/bash hermes
+USER hermes
+COPY --from=build --chown=hermes:hermes /src/hermes /hermes
 
 ENTRYPOINT ["/hermes"]
