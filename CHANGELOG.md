@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.1](https://github.com/soerenschneider/hermes/compare/v1.4.0...v1.4.1) (2025-07-06)
+
+
+### Bug Fixes
+
+* **deps:** bump debian from 12.7-slim to 12.9-slim ([fa7f19a](https://github.com/soerenschneider/hermes/commit/fa7f19ac075ceadfe0cc66985b8f07febcef7e44))
+* **deps:** bump github.com/nikoksr/notify from 1.1.0 to 1.3.0 ([557d7bd](https://github.com/soerenschneider/hermes/commit/557d7bd7d27671c7cd14b37bd0eb15582c7150b2))
+* **deps:** bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([5867a1c](https://github.com/soerenschneider/hermes/commit/5867a1c3ef2bf7fa86ac32181c9f854bbffe9050))
+
 ## [1.4.0](https://github.com/soerenschneider/hermes/compare/v1.3.0...v1.4.0) (2024-11-12)
 
 
