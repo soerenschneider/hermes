@@ -1,15 +1,15 @@
 module github.com/soerenschneider/hermes
 
-go 1.22.7
+go 1.23
 
-toolchain go1.23.2
+toolchain go1.24.4
 
 require (
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/emersion/go-smtp v0.21.3
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/go-playground/validator/v10 v10.27.0
-	github.com/hashicorp/go-retryablehttp v0.7.7
+	github.com/hashicorp/go-retryablehttp v0.7.8
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/nikoksr/notify v1.3.0
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1
