@@ -10,7 +10,7 @@ require (
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/hashicorp/go-retryablehttp v0.7.7
-	github.com/mattn/go-sqlite3 v1.14.24
+	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/nikoksr/notify v1.3.0
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1
 	github.com/oapi-codegen/runtime v1.1.1
