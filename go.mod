@@ -17,7 +17,7 @@ require (
 	github.com/prometheus/client_golang v1.20.5
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/rs/zerolog v1.33.0
-	github.com/segmentio/kafka-go v0.4.47
+	github.com/segmentio/kafka-go v0.4.48
 	github.com/sqlc-dev/sqlc v1.27.0
 	github.com/stretchr/testify v1.10.0
 	gitlab.com/tanna.dev/openapi-doc-http-handler v0.2.0
