@@ -9,7 +9,7 @@ COPY ./ ./
 RUN make build
 
 
-FROM debian:12.9-slim AS final
+FROM debian:12.11-slim AS final
 
 LABEL maintainer="soerenschneider"
 RUN useradd -m -s /bin/bash hermes
