@@ -2,7 +2,7 @@ module github.com/soerenschneider/hermes
 
 go 1.22.7
 
-toolchain go1.23.2
+toolchain go1.24.5
 
 require (
 	github.com/cenkalti/backoff/v4 v4.3.0
